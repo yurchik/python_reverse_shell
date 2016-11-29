@@ -70,3 +70,32 @@ def start_turtle():
                 send_target_commands(conn)
         else: 
             print("Command not recognized")
+
+
+# Display all current connections
+def list_connections():
+    results = ''
+    for i, conn in enumerate(all_connections):
+        try:
+            conn.send(str.encode(' '))
+            conn.recv(20480)
+        except:
+            del all_connections[i]
+            del all_addresses[i]
+            continue
+        results += str(i) + '   ' + str(all_addresses[i][0]) + '   ' + str(all_address[i][1]) + '\n'
+        print('------ Clients ------' + '\n' + results)
+
+
+# Select a target client
+def get _target(cmd):
+    try:
+        target = cmd.replace('select ', '')
+        target = int(target)
+        conn = all_connections[target]
+        print('You are now connected to ' + str(all_addresses[target][0]))
+        print(str(all_addresses[target][0]) + '> ', end="")
+        return conn
+    except:
+        print("Not a valid selection")
+        return None
