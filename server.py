@@ -21,7 +21,7 @@ def socket_bind():
         global host
         global port
         global s
-        print("Binding socket to the port: " + port)
+        print("Binding socket to the port: " + str(port))
         s.bind((host, port))
         s.listen(5)
     except socket.error as msg:
@@ -32,7 +32,7 @@ def socket_bind():
 # Establish the connection to the client
 def socket_accpt():
     conn, adress = s.accept()
-    print("Connection has been established | IP " + adress[0] + " | Port " + adress[1])
+    print("Connection has been established | IP " + str(adress[0]) + " | Port " + str(adress[1]))
     send_command(conn)
     conn.close()
 
