@@ -1,6 +1,5 @@
 import socket
 import threading
-import sys
 import time
 from queue import Queue
 
